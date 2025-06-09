@@ -1,6 +1,8 @@
 # CTFBox
 
-An Open Attack/Defense Infrastructure Simulation Tool - based on containers
+A stable working fork of the Attack/Defense Infrastructure Simulation Tool - based on containers
+
+This fork was made at a certain point to ensure we had control over what's changing within our internal simulations.
 
 <img width="1221" alt="Screenshot 2025-04-29 alle 9 22 05 AM" src="https://github.com/user-attachments/assets/29d8ff13-8523-4c8a-87dc-bf8931c0f490" />
 
@@ -118,7 +120,11 @@ You can also give wireguard profile, password and ip to each team member using a
 - Infrastructure Setup: Uses Docker Compose for easy setup and management of the infrastructure.
 - Extensible: Easily add new services, checkers, and exploits.
 
+## Developing services
+Developing services to use for the A/D is just as important as the infrastructure itself, each service comes with one or more checker depending on the number of flag stores. To develop your own checker please refer to the `howto.md` within the `gameserver/checkers` directory.
+
 ## Credits
 
+- https://github.com/domysh For designing and devoloping this whole infra
 - https://github.com/cmspam/incus-docker/ For the incus docker setup
 - https://ad.cyberchallenge.it/rules for the rules and the infrastructure design
