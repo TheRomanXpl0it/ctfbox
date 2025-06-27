@@ -44,8 +44,6 @@ access to some hosts functionality to the VMs, and escape from container is poss
 
 To connect to the VMs, you need to use one of the wireguard configurations in the wireguard folder.
 
-Instead you can run `python3 run.py compose exec team<team_id> bash` to connect to the VMs.
-
 To manage the game network run:
 
 ```bash 

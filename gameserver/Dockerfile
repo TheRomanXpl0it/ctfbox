@@ -11,12 +11,9 @@ FROM public.ecr.aws/docker/library/golang:1.24
 WORKDIR /app/
 
 RUN apt-get update && \
-	apt-get install -y python3-pip python3-dev python3-capstone build-essential \
+	apt-get install -y python3-pip python3-dev python3-capstone python3-venv build-essential \
 	iproute2 iputils-ping netcat-openbsd traceroute tcpdump ethtool iptables cmake \
 	libcapstone-dev build-essential python3-capstone
-
-COPY ./checkers/requirements.txt /tmp/requirements.txt 
-RUN pip3 install --break-system-packages -r /tmp/requirements.txt
 
 COPY ./entry.sh /tmp/
 RUN chmod +x /tmp/entry.sh

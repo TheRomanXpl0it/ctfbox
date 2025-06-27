@@ -101,9 +101,7 @@ def dir_sha_hash(path: str) -> str:
             path = os.path.join(root, name)
             hash_list.append((path, file_sha_hash(path)))
     hash_list.sort(key=lambda x: x[0])
-    return hashlib.sha256(
-        b":".join(map(lambda a: (a[0] + ":" + a[1]).encode(), hash_list))
-    ).hexdigest()
+    return hashlib.sha256(b":".join(map(lambda a: (a[0] + ":" + a[1]).encode(), hash_list))).hexdigest()
 
 
 class g:
@@ -115,18 +113,14 @@ class g:
     config_file = "config.json"
     prebuild_image = f"{project_name}-prebuilder"
     prebuilded_container = f"{project_name}-prebuilded"
-    prebuilt_image = (
-        f"{project_name}-vm-base"  # this is dynamic here, but it needs to be
-    )
+    prebuilt_image = f"{project_name}-vm-base"  # this is dynamic here, but it needs to be
     # manually changed in the FROM in vm/Dockerfile
     # and in the .gitignore
     secrets_dir = f".{project_name}-secrets-tmp"
 
 
 def is_linux():
-    return (
-        "linux" in sys.platform and "microsoft-standard" not in platform.uname().release
-    )
+    return "linux" in sys.platform and "microsoft-standard" not in platform.uname().release
 
 
 # Terminal colors
@@ -221,9 +215,7 @@ def gen_args(args_to_parse: list[str] | None = None):
     # Main parser
     parser = argparse.ArgumentParser(description=f"{g.name} Manager")
 
-    subcommands = parser.add_subparsers(
-        dest="command", help="Command to execute", required=True
-    )
+    subcommands = parser.add_subparsers(dest="command", help="Command to execute", required=True)
 
     # Compose Command
     parser_compose = subcommands.add_parser("compose", help="Run docker compose command")
@@ -236,16 +228,12 @@ def gen_args(args_to_parse: list[str] | None = None):
 
     # Start Command
     parser_start = subcommands.add_parser("start", help=f"Start {g.name}")
-    parser_start.add_argument(
-        "--config-only", "-C", action="store_true", help="Only generate config file"
-    )
+    parser_start.add_argument("--config-only", "-C", action="store_true", help="Only generate config file")
 
     # Stop Command
     subcommands.add_parser("stop", help=f"Stop {g.name}")
     # Wg config gen command
-    subcommands.add_parser(
-        "wg-gen", help="Generate wireguard configs if not exists or config changed"
-    )
+    subcommands.add_parser("wg-gen", help="Generate wireguard configs if not exists or config changed")
 
     # Restart Command
     parser_restart = subcommands.add_parser("restart", help=f"Restart {g.name}")
@@ -259,24 +247,12 @@ def gen_args(args_to_parse: list[str] | None = None):
 
     # Clear Command
     parser_clear = subcommands.add_parser("clear", help="Clear data")
-    parser_clear.add_argument(
-        "--all", "-A", action="store_true", help="Clear everything"
-    )
-    parser_clear.add_argument(
-        "--config", "-c", action="store_true", help="Clear config file"
-    )
-    parser_clear.add_argument(
-        "--team-vms", "-T", action="store_true", help="Clear all VMs related data"
-    )
-    parser_clear.add_argument(
-        "--wireguard", "-W", action="store_true", help="Clear wireguard data"
-    )
-    parser_clear.add_argument(
-        "--checkers-data", "-C", action="store_true", help="Clear checkers data"
-    )
-    parser_clear.add_argument(
-        "--gameserver-data", "-G", action="store_true", help="Clear gameserver data"
-    )
+    parser_clear.add_argument("--all", "-A", action="store_true", help="Clear everything")
+    parser_clear.add_argument("--config", "-c", action="store_true", help="Clear config file")
+    parser_clear.add_argument("--team-vms", "-T", action="store_true", help="Clear all VMs related data")
+    parser_clear.add_argument("--wireguard", "-W", action="store_true", help="Clear wireguard data")
+    parser_clear.add_argument("--checkers-data", "-C", action="store_true", help="Clear checkers data")
+    parser_clear.add_argument("--gameserver-data", "-G", action="store_true", help="Clear gameserver data")
 
     # Status Command
     subcommands.add_parser("status", help="Show status")
@@ -333,28 +309,20 @@ def composecmd(cmd, composefile=None):
         if os.system(f"docker-compose -p {g.project_name} {cmd}") != 0:
             exit(1)
     else:
-        puts(
-            "docker compose not found! please install docker compose!", color=colors.red
-        )
+        puts("docker compose not found! please install docker compose!", color=colors.red)
         exit(1)
 
 
 def check_already_running():
-    return g.container_name in cmd_check(
-        f'docker ps --filter "name=^{g.container_name}$"', get_output=True
-    )
+    return g.container_name in cmd_check(f'docker ps --filter "name=^{g.container_name}$"', get_output=True)
 
 
 def prebuilder_exists():
-    return g.prebuild_image in cmd_check(
-        f'docker image ls --filter "reference={g.prebuild_image}"', get_output=True
-    )
+    return g.prebuild_image in cmd_check(f'docker image ls --filter "reference={g.prebuild_image}"', get_output=True)
 
 
 def prebuilt_exists():
-    return g.prebuilt_image in cmd_check(
-        f'docker image ls --filter "reference={g.prebuilt_image}"', get_output=True
-    )
+    return g.prebuilt_image in cmd_check(f'docker image ls --filter "reference={g.prebuilt_image}"', get_output=True)
 
 
 def remove_prebuilder():
@@ -421,9 +389,7 @@ def incus_data_exists():
 
 
 def delete_incus_data():
-    cmd_check(
-        f"docker volume rm {g.project_name}_incus-data >/dev/null 2>&1", no_stderr=True
-    )
+    cmd_check(f"docker volume rm {g.project_name}_incus-data >/dev/null 2>&1", no_stderr=True)
 
 
 def write_compose(
@@ -468,6 +434,7 @@ def write_compose(
                     "services": {
                         "router": {
                             "hostname": "router",
+                            "container_name": "router",
                             "dns": [config.dns],
                             "build": "./router",
                             "cap_add": [
@@ -485,18 +452,12 @@ def write_compose(
                                 "PUID": os.getuid() if is_linux() else 0,
                                 "PGID": os.getgid() if is_linux() else 0,
                                 "RATE_NET": config.network_limit_bandwidth,
-                                "TEAM_IDS": ",".join(
-                                    str(team.id) for team in config.teams
-                                ),
-                                "NOP_TEAMS": ",".join(
-                                    str(team.id) for team in config.teams if team.nop
-                                ),
+                                "TEAM_IDS": ",".join(str(team.id) for team in config.teams),
+                                "NOP_TEAMS": ",".join(str(team.id) for team in config.teams if team.nop),
                                 "CONFIG_PER_TEAM": config.wireguard_profiles,
                                 "PUBLIC_IP": config.server_addr,
                                 "PUBLIC_PORT": config.wireguard_port,
-                                "EXTERNAL_SERVERS": "1"
-                                if external_wg_server_configs
-                                else "0",
+                                "EXTERNAL_SERVERS": "1" if external_wg_server_configs else "0",
                             },
                             "volumes": [
                                 "unixsk:/unixsk:z",
@@ -511,11 +472,7 @@ def write_compose(
                                 "externalnet": {
                                     "priority": 1,
                                 },
-                                **(
-                                    {f"vm-team{team.id}": {} for team in config.teams}
-                                    if spawn_docker_teams
-                                    else {}
-                                ),
+                                **({f"vm-team{team.id}": {} for team in config.teams} if spawn_docker_teams else {}),
                             },
                             "ports": [
                                 f"{config.wireguard_port}:51820/udp",
@@ -528,6 +485,7 @@ def write_compose(
                         },
                         "database": {
                             "hostname": f"{g.project_name}-database",
+                            "container_name": f"{g.project_name}-database",
                             "dns": [config.dns],
                             "image": "postgres:17",
                             "restart": "unless-stopped",
@@ -543,6 +501,7 @@ def write_compose(
                         },
                         "gameserver": {
                             "hostname": "gameserver",
+                            "container_name": "gameserver",
                             "dns": [config.dns],
                             "build": "./gameserver",
                             "restart": "unless-stopped",
@@ -569,6 +528,7 @@ def write_compose(
                             {
                                 "credentials": {
                                     "hostname": "credentials",
+                                    "container_name": "credentials",
                                     "dns": [config.dns],
                                     "build": "./credentials",
                                     "restart": "unless-stopped",
@@ -587,15 +547,13 @@ def write_compose(
                         **(
                             {
                                 "incus": {
+                                    "hostname": "incus",
+                                    "container_name": "incus",
                                     "dns": [config.dns],
                                     "build": "./incus",
                                     "depends_on": ["router"],
                                     "networks": ["externalnet"],
-                                    **(
-                                        {"restart": "unless-stopped"}
-                                        if incus_unless_stopped
-                                        else {}
-                                    ),
+                                    **({"restart": "unless-stopped"} if incus_unless_stopped else {}),
                                     "cgroup": "host",
                                     "pid": "host",
                                     "security_opt": [
@@ -633,16 +591,8 @@ def write_compose(
                                             "TEAM_NAME": team.name,
                                         },
                                     },
-                                    **(
-                                        {"storage_opt": {"size": config.max_disk_size}}
-                                        if config.max_disk_size
-                                        else {}
-                                    ),
-                                    **(
-                                        {"privileged": "true"}
-                                        if is_privileged
-                                        else {"runtime": "sysbox-runc"}
-                                    ),
+                                    **({"storage_opt": {"size": config.max_disk_size}} if config.max_disk_size else {}),
+                                    **({"privileged": "true"} if is_privileged else {"runtime": "sysbox-runc"}),
                                     "restart": "unless-stopped",
                                     "depends_on": [
                                         "router",
@@ -667,9 +617,7 @@ def write_compose(
                         {
                             "secrets": {
                                 **{
-                                    f"token_team_{team.id}": {
-                                        "file": f"{g.secrets_dir}/token_{team.id}"
-                                    }
+                                    f"token_team_{team.id}": {"file": f"{g.secrets_dir}/token_{team.id}"}
                                     for team in config.teams
                                 },
                             }
@@ -693,11 +641,7 @@ def write_compose(
                                 ],
                             },
                         },
-                        **(
-                            {f"vm-team{team.id}": "" for team in config.teams}
-                            if spawn_docker_teams
-                            else {}
-                        ),
+                        **({f"vm-team{team.id}": "" for team in config.teams} if spawn_docker_teams else {}),
                     },
                 }
             )
@@ -742,9 +686,7 @@ def clear_data(
     if remove_checkers_data:
         puts("Removing checkers data", color=colors.yellow)
         for service in os.listdir("./gameserver/checkers"):
-            shutil.rmtree(
-                f"./gameserver/checkers/{service}/flag_ids", ignore_errors=True
-            )
+            shutil.rmtree(f"./gameserver/checkers/{service}/flag_ids", ignore_errors=True)
     if remove_incus_data:
         puts("Removing incus data", color=colors.yellow)
         delete_incus_data()
@@ -819,9 +761,7 @@ def get_input(
 
 def config_input() -> Config:
     # Ask if user wants to use the web editor
-    use_web_editor = (
-        get_input("Do you want to use the web editor?", "yes").lower().startswith("y")
-    )
+    use_web_editor = get_input("Do you want to use the web editor?", "yes").lower().startswith("y")
 
     if use_web_editor:
         puts("Open the web editor at: https://ctfbox.domy.sh/editor", color=colors.green)
@@ -842,9 +782,7 @@ def config_input() -> Config:
             return Config.from_dict(config_data)
         except Exception as e:
             puts(f"Error decoding configuration: {e}", color=colors.red)
-            puts(
-                "Please try again with valid base64 compressed config", color=colors.red
-            )
+            puts("Please try again with valid base64 compressed config", color=colors.red)
             exit(1)
 
     # Original config input flow
@@ -888,9 +826,7 @@ def config_input() -> Config:
     c.dns = get_input("DNS", default_configs.dns)
 
     while True:
-        c.vm_mode = get_input(
-            "VM mode (incus/privileged/sysbox/none)", default_configs.vm_mode
-        )
+        c.vm_mode = get_input("VM mode (incus/privileged/sysbox/none)", default_configs.vm_mode)
         if c.vm_mode.lower() == "privileged":
             c.vm_mode = "privileged"
             break
@@ -909,9 +845,9 @@ def config_input() -> Config:
     if c.vm_mode in ["privileged", "sysbox", "incus"]:
         c.max_vm_cpus = get_input("Max VM CPUs", default_configs.max_vm_cpus)
         c.max_vm_mem = get_input("Max VM Memory", default_configs.max_vm_mem)
-        if c.vm_mode == "incus" or get_input(
-            "Enable disk limit? (REQUIRES XFS FILESYSTEM!)", "yes"
-        ).lower().startswith("y"):
+        if c.vm_mode == "incus" or get_input("Enable disk limit? (REQUIRES XFS FILESYSTEM!)", "yes").lower().startswith(
+            "y"
+        ):
             c.max_disk_size = get_input("Max VM disk size", "30G")
         else:
             c.max_disk_size = None
@@ -936,24 +872,12 @@ def config_input() -> Config:
         )
     )
 
-    c.initial_service_score = abs(
-        int(get_input("Initial service score", default_configs.initial_service_score))
-    )
-    c.max_flags_per_request = abs(
-        int(get_input("Max flags per request", default_configs.max_flags_per_request))
-    )
-    c.submission_timeout = abs(
-        float(get_input("Submission timeout", default_configs.submission_timeout))
-    )
-    c.network_limit_bandwidth = get_input(
-        "Network limit bandwidth", default_configs.network_limit_bandwidth
-    )
+    c.initial_service_score = abs(int(get_input("Initial service score", default_configs.initial_service_score)))
+    c.max_flags_per_request = abs(int(get_input("Max flags per request", default_configs.max_flags_per_request)))
+    c.submission_timeout = abs(float(get_input("Submission timeout", default_configs.submission_timeout)))
+    c.network_limit_bandwidth = get_input("Network limit bandwidth", default_configs.network_limit_bandwidth)
 
-    if (
-        get_input("Expose externally the gameserver scoreboard?", "no")
-        .lower()
-        .startswith("y")
-    ):
+    if get_input("Expose externally the gameserver scoreboard?", "no").lower().startswith("y"):
         c.gameserver_exposed_port = get_input(
             "Insert with witch port or ip:port to expose the gameserver scoreboard",
             "127.0.0.1:8888",
@@ -962,9 +886,7 @@ def config_input() -> Config:
         c.gameserver_exposed_port = None
 
     if get_input("Enable credential service?", "no").lower().startswith("y"):
-        c.credential_server = get_input(
-            "Insert the port to expose the credential server", "127.0.0.1:4040"
-        )
+        c.credential_server = get_input("Insert the port to expose the credential server", "127.0.0.1:4040")
     else:
         c.credential_server = None
 
@@ -1068,12 +990,8 @@ def main():
             color=colors.red,
         )
         exit()
-    elif not cmd_check("docker-compose --version") and not cmd_check(
-        "docker compose --version"
-    ):
-        puts(
-            "docker compose not found! please install docker compose!", color=colors.red
-        )
+    elif not cmd_check("docker-compose --version") and not cmd_check("docker compose --version"):
+        puts("docker compose not found! please install docker compose!", color=colors.red)
         exit()
 
     if args.command:
@@ -1108,14 +1026,8 @@ def main():
                         "The database volume already exists, you need to clear it before starting a new game",
                         color=colors.red,
                     )
-                    if (
-                        get_input("Do you want to clear it before starting?", "no")
-                        .lower()
-                        .startswith("y")
-                    ):
-                        clear_data_only(
-                            remove_gameserver_data=True, remove_checkers_data=True
-                        )
+                    if get_input("Do you want to clear it before starting?", "no").lower().startswith("y"):
+                        clear_data_only(remove_gameserver_data=True, remove_checkers_data=True)
 
                 if not config_exists():
                     puts(
@@ -1137,11 +1049,7 @@ def main():
                     vm_router_hash = info.get("vm_router_hash", None)
                     current_router_hash = server_config_hash(config)
                     if config.vm_mode == "privileged" or config.vm_mode == "sysbox":
-                        if (
-                            not prebuilt_exists()
-                            or vm_dir_hash != old_vm_dir_hash
-                            or was_built_with != config.vm_mode
-                        ):
+                        if not prebuilt_exists() or vm_dir_hash != old_vm_dir_hash or was_built_with != config.vm_mode:
                             puts("Need to build the team VM image", color=colors.yellow)
                             clear_data_only(
                                 remove_prebuilded_container=True,

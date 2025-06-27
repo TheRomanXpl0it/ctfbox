@@ -105,7 +105,7 @@ func genCheckFlag(team string, service string, serviceID uint, round uint) strin
 }
 
 func runChecker(team string, service string, params *CheckerParams, ctx context.Context) (int, string) {
-	cmd := exec.CommandContext(ctx, "python3", "checker.py")
+	cmd := exec.CommandContext(ctx, "venv/bin/python3", "checker.py")
 	cmd.Env = append(cmd.Env, "TOKEN="+conf.Token)
 	cmd.Env = append(cmd.Env, "ACTION="+params.Action)
 	cmd.Env = append(cmd.Env, "TEAM_ID="+params.TeamID)
