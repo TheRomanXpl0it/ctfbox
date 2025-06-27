@@ -9,3 +9,5 @@ volumes/
 /.deploy_info
 incus/data/**
 incus/data
+
+vm/services/*
