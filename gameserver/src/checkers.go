@@ -49,20 +49,42 @@ func initRand() {
 	randSrc = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
 
-func genFlag() string {
+func toBase36(n uint) string {
+	const base36 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	if n == 0 {
+		return "00"
+	}
+	var result string
+	for n > 0 {
+		result = string(base36[n%36]) + result
+		n /= 36
+	}
+	if len(result) < 2 {
+		result = "0" + result
+	}
+	return result
+}
+
+func genFlag(team uint, service uint, round uint) string {
 	letters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	var flag string
-	for range flagLen - 1 {
+	for range flagLen - 1 - 6 {
 		index := randSrc.Intn(len(letters))
 		flag += string(letters[index])
 	}
-	return flag + "="
+	return toBase36(round) + toBase36(team) + toBase36(service) + flag + "="
 }
 
-func genCheckFlag(team string, service string, round uint) string {
+func genCheckFlag(team string, service string, serviceID uint, round uint) string {
 	var ctx context.Context = context.Background()
+	var teamID uint
+	_, err := fmt.Sscanf(strings.Split(team, ".")[2], "%d", &teamID)
+	if err != nil {
+		log.Criticalf("Error parsing team ID from %v: %v", team, err)
+		teamID = 1
+	}
 	for {
-		flag := genFlag()
+		flag := genFlag(teamID, serviceID, round)
 		_, err := conn.NewInsert().Model(&db.Flag{
 			ID:      flag,
 			Team:    team,
@@ -273,9 +295,9 @@ func checkerRoutine() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeForNextRound)*time.Millisecond)
 		waitGroup.Add(len(teams) * len(conf.Services))
 		for i, team := range teams {
-			for _, service := range conf.Services {
+			for serviceID, service := range conf.Services {
 
-				go func(teamId int, team string, service string, waitGroup *sync.WaitGroup, maxTimeout int64) {
+				go func(teamId int, team string, service string, serviceID uint, waitGroup *sync.WaitGroup, maxTimeout int64) {
 					defer waitGroup.Done()
 
 					var checkersWaitGroup sync.WaitGroup
@@ -287,7 +309,7 @@ func checkerRoutine() {
 						return
 					}
 
-					newFlag := genCheckFlag(team, service, currentRound)
+					newFlag := genCheckFlag(team, service, serviceID, currentRound)
 
 					statusData := db.StatusHistory{
 						Team:    team,
@@ -405,7 +427,7 @@ func checkerRoutine() {
 						log.Criticalf("Error inserting status %v:%v on %v: %v", team, teamId, service, err)
 					}
 
-				}(i, team, service, &waitGroup, timeForNextRound)
+				}(i, team, service, uint(serviceID), &waitGroup, timeForNextRound)
 			}
 		}
 

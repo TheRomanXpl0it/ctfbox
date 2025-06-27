@@ -1088,7 +1088,7 @@ def main():
                     puts(f"{g.name} is starting!", color=colors.yellow)
                     config = read_config()
                     write_compose(config)
-                    router_generate_configs()
+                    router_generate_configs(config)
             case "start":
                 if check_already_running():
                     puts(f"{g.name} is already running!", color=colors.yellow)

@@ -2,6 +2,8 @@
 
 chmod +x /incus.sh
 
+ulimit -u 1024000
+
 trap "cleanup; exit" SIGTERM
 cleanup() {
   CHILD_PIDS=$(pgrep -P $$)
