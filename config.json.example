@@ -1,0 +1,74 @@
+{
+	"gameserver_token": "b2a7722a0dd75b628dbb4898f9baf45f0911a614db31b20e94870be11cbcde5e",
+	"server_addr": "10.10.10.10",
+	"wireguard_port": 51000,
+	"wireguard_profiles": 10,
+	"dns": "1.1.1.1",
+	"tick_time": 120,
+	"flag_expire_ticks": 5,
+	"initial_service_score": 5000,
+	"max_flags_per_request": 3000,
+	"submission_timeout": 0.03,
+	"network_limit_bandwidth": "50mbit",
+	"max_vm_cpus": "1",
+	"max_vm_mem": "3G",
+	"teams": [
+		{
+			"id": 0,
+			"name": "Nop Team",
+			"token": "2f2a3807d9eb6ad239f7a1d4b1a104ab7eecd62c2611302127a870d8e3fc8286",
+			"nop": true,
+			"image": ""
+		},
+		{
+			"id": 1,
+			"name": "Sapienza",
+			"token": "36587679154ffc1868dba8c42b504810d251a11239a8f2f6c18295322ea66767",
+			"nop": false,
+			"image": "https://cyberchallenge.it/api/../media/public/venue/logo/unirm1.png"
+		},
+		{
+			"id": 2,
+			"name": "Tor Vergata",
+			"token": "fc7d0b0b64231de8fb14adbd7db6e92102612e367b45ddd957a6dd040e450d0d",
+			"nop": false,
+			"image": "https://cyberchallenge.it/api/../media/public/venue/logo/unirm2.png"
+		},
+		{
+			"id": 3,
+			"name": "Roma 3",
+			"token": "fd2dfe6189b7d122f8686e4630b11dde33f78254af32e1176150f6ba4408fb45",
+			"nop": false,
+			"image": "https://cyberchallenge.it/media/public/venue/logo/unirm3.png"
+		},
+		{
+			"id": 4,
+			"name": "Campus Biomedico",
+			"token": "8c4fab06651ad2785a3bed62d4030e37d9a610d0c73a2eebbaf67dcd3c692d5a",
+			"nop": false,
+			"image": "https://cyberchallenge.it/media/public/venue/logo/unicampus.png"
+		},
+		{
+			"id": 5,
+			"name": "Verona",
+			"token": "978e953b5283762e9f0b1d12faf8eb12c55e2885105ae03cf78ee57f8cb35d4d",
+			"nop": false,
+			"image": "https://cyberchallenge.it/api/../media/public/venue/logo/univr.png"
+		},
+		{
+			"id": 6,
+			"name": "Genova",
+			"token": "95a565f3276914aad133770246f393e87fbb393cf726ce4e81de776ddbf0d70c",
+			"nop": false,
+			"image": "https://cyberchallenge.it/media/public/venue/logo/unige.png"
+		}
+	],
+	"vm_mode": "incus",
+	"start_time": "2025-06-27T8:00:00.000Z",
+	"end_time": "2025-06-27T16:00:00.000Z",
+	"max_disk_size": "60G",
+	"gameserver_exposed_port": null,
+	"credential_server": null,
+	"debug": false,
+	"grace_time": 3600
+}
