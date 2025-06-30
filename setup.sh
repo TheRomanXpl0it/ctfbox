@@ -10,5 +10,6 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 systemctl start docker
 systemctl enable docker
 
-ulimit -u 1024000
+echo '* soft nofile 1048576' >> /etc/security/limits.conf
+echo '* hard nofile 1048576' >> /etc/security/limits.conf
 echo 200000 > /proc/sys/kernel/keys/maxkeys
